@@ -23,16 +23,33 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       { status: 302 },
     );
   }
+  /*
+  const url = `https://avascan.info/api/pvm/validator/${text}?ecosystem=avalanche`;
+    
+  // Effettua una richiesta GET
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Errore nella richiesta');
+  }
+
+  const data = await response.json();
+
+  let score = data?.validationsSuccessRate?.percentage;
+  score = score * 100;
+
+  // `https://dummyimage.com/600x400/191a23/fff.png&text=Validation+Success+Rate:+${score}%25`,
+  */
 
   return new NextResponse(
     getFrameHtmlResponse({
       buttons: [
         {
-          label: `Story: ${text} 🌲`,
+          label: `Node ID: ${text}`,
         },
       ],
       image: {
-        src: `${NEXT_PUBLIC_URL}/park-1.png`,
+        src: `https://dummyimage.com/600x400/191a23/fff.png&text=Validation+Success+Rate:+100%25`,
       },
       postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
     }),

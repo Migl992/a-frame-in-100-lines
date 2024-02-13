@@ -1,3 +1,4 @@
+import React from "react";
 import { getFrameMetadata } from '@coinbase/onchainkit';
 import type { Metadata } from 'next';
 import { NEXT_PUBLIC_URL } from './config';
@@ -5,7 +6,7 @@ import { NEXT_PUBLIC_URL } from './config';
 const frameMetadata = getFrameMetadata({
   buttons: [
     {
-      label: 'Story time!',
+      label: 'Submit',
     },
     {
       action: 'link',
@@ -22,7 +23,7 @@ const frameMetadata = getFrameMetadata({
     aspectRatio: '1:1',
   },
   input: {
-    text: 'Tell me a boat story',
+    text: 'Insert Node ID',
   },
   postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
 });
@@ -42,8 +43,6 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <>
-      <h1>zizzamia.xyz</h1>
-    </>
+    <></>
   );
 }
