@@ -2,6 +2,22 @@ import { FrameRequest, getFrameMessage, getFrameHtmlResponse } from '@coinbase/o
 import { NextRequest, NextResponse } from 'next/server';
 import { NEXT_PUBLIC_URL } from '../../config';
 
+const errorImage = (text: string) => {
+  return new NextResponse(
+    getFrameHtmlResponse({
+      buttons: [
+        {
+          label: `Node ID: ${text}`,
+        },
+      ],
+      image: {
+        src: `https://dummyimage.com/600x400/191a23/fff.png&text=Error`,
+      },
+      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+    }),
+  );
+}
+
 async function getResponse(req: NextRequest): Promise<NextResponse> {
   let accountAddress: string | undefined = '';
   let text: string | undefined = '';
@@ -17,20 +33,13 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     text = message.input;
   }
 
-  if (message?.button === 3) {
-    return NextResponse.redirect(
-      'https://www.google.com/search?q=cute+dog+pictures&tbm=isch&source=lnms',
-      { status: 302 },
-    );
-  }
-  /*
   const url = `https://avascan.info/api/pvm/validator/${text}?ecosystem=avalanche`;
     
   // Effettua una richiesta GET
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error('Errore nella richiesta');
+    return errorImage(text);
   }
 
   const data = await response.json();
@@ -38,10 +47,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   let score = data?.validationsSuccessRate?.percentage;
   score = score * 100;
 
-  // `https://dummyimage.com/600x400/191a23/fff.png&text=Validation+Success+Rate:+${score}%25`,
-  */
-
-  return new NextResponse(
+  return score ?  new NextResponse(
     getFrameHtmlResponse({
       buttons: [
         {
@@ -49,11 +55,11 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         },
       ],
       image: {
-        src: `https://dummyimage.com/600x400/191a23/fff.png&text=Validation+Success+Rate:+100%25`,
+        src: `https://dummyimage.com/600x400/191a23/fff.png&text=Validation+Success+Rate:+${score}%25`,
       },
       postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
     }),
-  );
+  ) : errorImage(text);
 }
 
 export async function POST(req: NextRequest): Promise<Response> {

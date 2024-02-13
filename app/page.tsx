@@ -9,17 +9,12 @@ const frameMetadata = getFrameMetadata({
     },
     {
       action: 'link',
-      label: 'Link to Google',
-      target: 'https://www.google.com',
-    },
-    {
-      label: 'Redirect to pictures',
-      action: 'post_redirect',
+      label: 'Link to Validator detail',
+      target: 'https://avascan.info',
     },
   ],
   image: {
-    src: `${NEXT_PUBLIC_URL}/park-3.png`,
-    aspectRatio: '1:1',
+    src: `https://avascan.info/cdn/og-image.png`,
   },
   input: {
     text: 'Insert Node ID',
