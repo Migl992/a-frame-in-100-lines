@@ -44,8 +44,38 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const data = await response.json();
 
-  let score: number | undefined = data?.validationsSuccessRate?.percentage;
-  score = score ? score * 100: undefined;
+  let scoreval: number | undefined = data?.validationsSuccessRate?.percentage;
+  scoreval = scoreval ? parseFloat((scoreval * 100).toFixed(2)) : undefined;
+  let numval: number | undefined = data?.validationsSuccessRate?.total;
+  numval = numval ? numval : undefined;
+  let scoredel: number | undefined = data?.delegationsSuccessRate?.percentage;
+  scoredel = scoredel ? parseFloat((scoredel * 100).toFixed(2)): undefined;
+  let numdel: number | undefined = data?.delegationsSuccessRate?.total;
+  numdel = numdel ? numdel : undefined;
+  let activedel: number | undefined = data?.activeDelegations?.count;
+  activedel = activedel;
+  let feedel: number | undefined = data?.activeDelegations?.feePercentage;
+  feedel = feedel ? feedel * 100: undefined;
+  let maxyield: number | undefined = data?.activeDelegations?.maxYield;
+  maxyield = maxyield ? parseFloat((maxyield *  100).toFixed(2)): undefined;
+  let avgresp: number | undefined = data?.activeValidation?.averageResponse;
+  avgresp = avgresp ? parseFloat((avgresp * 100).toFixed(2)): undefined;
+  let potentialRewardData = data?.activeValidation?.potentialReward;
+  let potrew = potentialRewardData && potentialRewardData.value;
+  potrew = parseFloat((potrew /   1000000000).toFixed(2));
+
+  let timeleft = data?.activeValidation?.timeLeft;
+  function convertMillisecondsToDaysAndHours(milliseconds: number) {
+    const totalSeconds = Math.floor(milliseconds /  1000);
+    const totalMinutes = Math.floor(totalSeconds /  60);
+    const totalHours = Math.floor(totalMinutes /  60);
+    const days = Math.floor(totalHours /  24);
+    const hours = totalHours %  24;
+  
+    return `${days} days and ${hours} hours`;
+  }
+  
+  const formattedTime = convertMillisecondsToDaysAndHours(timeleft);
 
   const dynaPicturesEndpoint = 'https://dynapictures.com/b/rest/customer/designs/857ba510f9';
   const headers = {
@@ -65,7 +95,43 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       },
       {
         name: "text3",
-        text: `Validation success rate: ${score}%`
+        text: `Validation success rate: ${scoreval}%`
+      },
+      {
+        name: "text5",
+        text: `Delegation success rate: ${scoredel}%`
+      },
+      {
+        name: "text9",
+        text: `Total validations: ${numval}`
+      },
+      {
+        name: "text11",
+        text: `Total delegations: ${numdel}`
+      },
+      {
+        name: "text12",
+        text: `Active Delegations: ${activedel}`
+      },
+      {
+        name: "text13",
+        text: `Fee: ${feedel}%`
+      },
+      {
+        name: "text14",
+        text: `Max yield: ${maxyield}%`
+      },
+      {
+        name: "text15",
+        text: `Average response: ${avgresp}%`
+      },
+      {
+        name: "text16",
+        text: `Potential reward: ${potrew}AVAX`
+      },
+      {
+        name: "text17",
+        text: `Time left: ${formattedTime}`
       }
     ]
   };
@@ -86,7 +152,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   // Assuming the response includes a URL to the generated image
   const generatedImageUrl = imageData.imageUrl;
 
-  return score ?  new NextResponse(
+  return scoreval ?  new NextResponse(
     getFrameHtmlResponse({
       buttons: [
         {

@@ -7,11 +7,11 @@ const frameMetadata = getFrameMetadata({
     {
       label: 'Submit',
     },
-    {
+/*     {
       action: 'link',
       label: 'Link to Validator detail',
       target: 'https://avascan.info',
-    },
+    }, */
   ],
   image: {
     src: `https://avascan.info/cdn/og-image.png`,
