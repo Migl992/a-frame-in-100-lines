@@ -136,35 +136,39 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     ]
   };
 
-  // Make a POST request to the DynaPictures API
-  const dynaPicturesResponse = await fetch(dynaPicturesEndpoint, {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(payload)
-  });
+  try {
+    // Make a POST request to the DynaPictures API
+    const dynaPicturesResponse = await fetch(dynaPicturesEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
 
-  if (!dynaPicturesResponse.ok) {
-    throw new Error('Failed to generate image from DynaPictures');
-  }
+    if (!dynaPicturesResponse.ok) {
+      throw new Error('Failed to generate image from DynaPictures');
+    }
 
-  const imageData = await dynaPicturesResponse.json();
+    const imageData = await dynaPicturesResponse.json();
 
-  // Assuming the response includes a URL to the generated image
-  const generatedImageUrl = imageData.imageUrl;
+    // Assuming the response includes a URL to the generated image
+    const generatedImageUrl = imageData.imageUrl;
 
-  return scoreval ?  new NextResponse(
-    getFrameHtmlResponse({
-      buttons: [
-        {
-          label: `Node ID: ${text}`,
+    return scoreval ?  new NextResponse(
+      getFrameHtmlResponse({
+        buttons: [
+          {
+            label: `Node ID: ${text}`,
+          },
+        ],
+        image: {
+          src: generatedImageUrl
         },
-      ],
-      image: {
-        src: generatedImageUrl
-      },
-      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
-    }),
-  ) : errorImage(text);
+        postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+      }),
+    ) : errorImage(text);
+  } catch (error) {
+    return errorImage(text);
+  }
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
