@@ -44,7 +44,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const data = await response.json();
 
-  let scoreval: number | undefined = data?.validationsSuccessRate?.percentage;
+  let scoreval = data?.validationsSuccessRate?.percentage;
   scoreval = scoreval ? parseFloat((scoreval * 100).toFixed(2)) : undefined;
   let numval: number | undefined = data?.validationsSuccessRate?.total;
   numval = numval ? numval : undefined;
@@ -77,7 +77,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   
   const formattedTime = convertMillisecondsToDaysAndHours(timeleft);
 
-  const dynaPicturesEndpoint = 'https://dynapictures.com/b/rest/customer/designs/857ba510f9';
+/*   const dynaPicturesEndpoint = 'https://dynapictures.com/b/rest/customer/designs/857ba510f9';
   const headers = {
     'Authorization': 'Bearer 31d61e0f72bf51e22101b8357a2434242a748c8bd0328883',
     'Content-Type': 'application/json',
@@ -136,39 +136,104 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     ]
   };
 
-  try {
-    // Make a POST request to the DynaPictures API
-    const dynaPicturesResponse = await fetch(dynaPicturesEndpoint, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(payload)
-    });
+  // Make a POST request to the DynaPictures API
+  const dynaPicturesResponse = await fetch(dynaPicturesEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload)
+  });
 
-    if (!dynaPicturesResponse.ok) {
-      throw new Error('Failed to generate image from DynaPictures');
-    }
-
-    const imageData = await dynaPicturesResponse.json();
-
-    // Assuming the response includes a URL to the generated image
-    const generatedImageUrl = imageData.imageUrl;
-
-    return scoreval ?  new NextResponse(
-      getFrameHtmlResponse({
-        buttons: [
-          {
-            label: `Node ID: ${text}`,
-          },
-        ],
-        image: {
-          src: generatedImageUrl
-        },
-        postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
-      }),
-    ) : errorImage(text);
-  } catch (error) {
-    return errorImage(text);
+  if (!dynaPicturesResponse.ok) {
+    throw new Error('Failed to generate image from DynaPictures');
   }
+
+  const imageData = await dynaPicturesResponse.json();
+
+  // Assuming the response includes a URL to the generated image
+  const generatedImageUrl = imageData.imageUrl; */
+  const QuickChart = require('quickchart-js');
+
+  const chart = new QuickChart();
+
+  chart.setWidth(500)
+  chart.setHeight(300);
+  chart.setVersion('2.9.4');
+
+  chart.setConfig({
+    type: 'doughnut',
+    data: {
+      datasets: [
+        {
+          data: [scoreval,100-scoreval],
+          backgroundColor: ['green', '#ffffff'],
+          label: 'Dataset 1',
+          borderWidth: 0,
+        },
+      ],
+      labels: ['A', 'C'],
+    },
+    options: {
+      circumference: Math.PI,
+      rotation: Math.PI,
+      cutoutPercentage: 75,
+      layout: {
+        padding: 40,
+      },
+      legend: {
+        display: false,
+      },
+      plugins: {
+        datalabels: {
+          color: '#ffffff',
+          anchor: 'end',
+          align: 'end',
+          formatter: (val: string | number) => val + '%',
+          font: {
+            size: 18,
+            weight: 'bold',
+          },
+        },
+        doughnutlabel: {
+          labels: [
+            {
+              text: '\nValidation Success rate\n\n\n\n\nTotal validations:',
+              color: '#ffffff',
+              font: {
+                size: 18,
+              },
+            },
+            {
+             text: '\n\n\n\n\n20',
+              color: '#ffffff',
+              font: {
+                size: 25,
+                weight: 'bold',
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+
+// Print the chart URL
+  const testurl = (chart.getUrl({ backgroundColor: '#381E72' }));
+
+  const generatedImageUrl = testurl
+      
+  return scoreval ?  new NextResponse(
+    getFrameHtmlResponse({
+      buttons: [
+        {
+          label: `Node ID: ${text}`,
+        },
+      ],
+      image: {
+        src: generatedImageUrl
+      },
+      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+    }),
+  ) : errorImage(text);
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
